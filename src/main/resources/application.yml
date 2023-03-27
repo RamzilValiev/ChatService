@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    username: postgres
+    password: postgres
+    url: jdbc:postgresql://localhost:5432/ChatDataBase
+
+
+
+  # prefix-migration default V, именовать файл V[номер версии]__name
+  flyway:
+    default-schema: test_schema
+    baseline-on-migrate: true
+
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        default_schema: test_schema
+
+
+server:
+  port: 9000
