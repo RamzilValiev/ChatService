@@ -55,14 +55,13 @@
             <artifactId>flyway-core</artifactId>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/com.querydsl/querydsl-jpa -->
-
-        <!-- https://mvnrepository.com/artifact/javax.persistence/javax.persistence-api -->
+        <!-- https://mvnrepository.com/artifact/org.modelmapper/modelmapper -->
         <dependency>
-            <groupId>javax.persistence</groupId>
-            <artifactId>javax.persistence-api</artifactId>
-            <version>2.2</version>
+            <groupId>org.modelmapper</groupId>
+            <artifactId>modelmapper</artifactId>
+            <version>3.1.1</version>
         </dependency>
+
 
     </dependencies>
 

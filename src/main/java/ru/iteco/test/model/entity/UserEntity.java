@@ -27,6 +27,6 @@ public class UserEntity {
     private String userName;
 
     @Column(name = "created_at")
-    @CreationTimestamp
+    @CreationTimestamp // Сохраняет в entity localtime автоматически
     private LocalDateTime createdAt;
 }
