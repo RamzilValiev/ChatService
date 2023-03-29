@@ -7,17 +7,17 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import ru.iteco.test.model.dto.UserErrorResponse;
 
 @ControllerAdvice
-public class RestExceptionHandler {
+public class UserExceptionHandler {
 
     @ExceptionHandler
     private ResponseEntity<UserErrorResponse> handleException(UserNotFoundException e) {
-        UserErrorResponse response = new UserErrorResponse("User with this id is not found");
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        UserErrorResponse userErrorResponse = new UserErrorResponse(e.getMessage());
+        return new ResponseEntity<>(userErrorResponse, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler
     private ResponseEntity<UserErrorResponse> handleException(UserAlreadyExistException e) {
-        UserErrorResponse response = new UserErrorResponse("User with the same name already exists");
+        UserErrorResponse response = new UserErrorResponse(e.getMessage());
         return new ResponseEntity<>(response, HttpStatus.CONFLICT);
     }
 }

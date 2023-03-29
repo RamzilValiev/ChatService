@@ -15,19 +15,15 @@ public class UserController {
 
     private final UserService userService;
 
-    // ----------------------------   Help method ----------------------------
-
     @GetMapping()
     public List<UserDto> getUsers() {
         return userService.findAll();
     }
 
     @GetMapping("/{id}")
-    public UserDto getUser(@PathVariable("id") Integer id) {
+    public UserDto getUser(@PathVariable("id") Long id) {
         return userService.findById(id);
     }
-
-    // ----------------------------   Help method ----------------------------
 
     @PostMapping("/add")
     @ResponseStatus(HttpStatus.CREATED)
