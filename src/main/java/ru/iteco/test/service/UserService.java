@@ -3,8 +3,8 @@ package ru.iteco.test.service;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-import ru.iteco.test.exception.UserAlreadyExistException;
-import ru.iteco.test.exception.UserNotFoundException;
+import ru.iteco.test.exception.user.UserAlreadyExistException;
+import ru.iteco.test.exception.user.UserNotFoundException;
 import ru.iteco.test.model.dto.UserDto;
 import ru.iteco.test.model.entity.UserEntity;
 import ru.iteco.test.repository.UserRepository;
@@ -19,7 +19,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
 
-    // ---------------------------- Help method ----------------------------
     public List<UserDto> findAll() {
         List<UserEntity> userEntities = userRepository.findAll();
         return userEntities.stream()
@@ -27,18 +26,21 @@ public class UserService {
                 .toList();
     }
 
-    public UserDto findById(Integer id) {
+    public UserDto findById(Long id) {
         return userRepository.findById(id)
                 .map(userEntity -> new UserDto(userEntity.getUserName(), userEntity.getCreatedAt()))
-                .orElseThrow(UserNotFoundException::new); // В случае если юзер не найден выкидываю свое исключение
+                .orElseThrow(() -> new UserNotFoundException(id));
     }
 
-    // ---------------------------- Help method ----------------------------
+    public UserEntity findUserEntityById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
+    }
 
     public Long save(UserDto userDto) {
         Optional<UserEntity> userEntityOptional = userRepository.findByUserName(userDto.getUserName());
         if (userEntityOptional.isPresent()) {
-            throw new UserAlreadyExistException();
+            throw new UserAlreadyExistException(userDto.getUserName());
         }
 
         UserEntity userEntity = convertToUserEntity(userDto);
@@ -47,6 +49,6 @@ public class UserService {
     }
 
     private UserEntity convertToUserEntity(UserDto userDto) {
-        return modelMapper.map(userDto, UserEntity.class); // в Application создаем @Bean modelMapper
+        return modelMapper.map(userDto, UserEntity.class);
     }
 }
