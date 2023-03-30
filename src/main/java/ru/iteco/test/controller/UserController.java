@@ -30,5 +30,4 @@ public class UserController {
     public Long createNewUser(@RequestBody UserDto userDto) {
         return userService.save(userDto);
     }
-
 }

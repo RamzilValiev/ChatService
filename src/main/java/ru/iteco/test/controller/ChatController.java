@@ -31,5 +31,4 @@ public class ChatController {
     public Long createNewChat(@RequestBody ChatDto chatDto) {
         return chatService.save(chatDto);
     }
-
 }

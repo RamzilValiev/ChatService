@@ -1,9 +1,11 @@
-package ru.iteco.test.exception;
+package ru.iteco.test.exception.handler;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import ru.iteco.test.exception.chat.ChatAlreadyExistException;
+import ru.iteco.test.exception.chat.ChatNotFoundException;
 import ru.iteco.test.model.dto.ChatErrorResponse;
 
 @ControllerAdvice

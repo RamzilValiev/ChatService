@@ -1,4 +1,4 @@
-package ru.iteco.test.exception;
+package ru.iteco.test.exception.chat;
 
 public class ChatNotFoundException extends RuntimeException {
     public ChatNotFoundException(Long id) {

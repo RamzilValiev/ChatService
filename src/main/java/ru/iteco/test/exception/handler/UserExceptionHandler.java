@@ -1,9 +1,11 @@
-package ru.iteco.test.exception;
+package ru.iteco.test.exception.handler;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import ru.iteco.test.exception.user.UserAlreadyExistException;
+import ru.iteco.test.exception.user.UserNotFoundException;
 import ru.iteco.test.model.dto.UserErrorResponse;
 
 @ControllerAdvice

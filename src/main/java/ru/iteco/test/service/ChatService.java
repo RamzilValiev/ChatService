@@ -2,16 +2,13 @@ package ru.iteco.test.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.iteco.test.exception.ChatAlreadyExistException;
-import ru.iteco.test.exception.ChatNotFoundException;
-import ru.iteco.test.exception.UserAlreadyExistException;
+import ru.iteco.test.exception.chat.ChatAlreadyExistException;
+import ru.iteco.test.exception.chat.ChatNotFoundException;
 import ru.iteco.test.model.dto.ChatDto;
-import ru.iteco.test.model.dto.ChatErrorResponse;
 import ru.iteco.test.model.entity.ChatEntity;
 import ru.iteco.test.model.entity.UserEntity;
 import ru.iteco.test.repository.ChatRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 

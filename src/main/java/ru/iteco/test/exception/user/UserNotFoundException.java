@@ -1,4 +1,4 @@
-package ru.iteco.test.exception;
+package ru.iteco.test.exception.user;
 
 public class UserNotFoundException extends RuntimeException {
     public UserNotFoundException(Long id) {
