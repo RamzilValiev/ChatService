@@ -9,7 +9,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 @Setter
-public class UserDto {
-    private String userName;
+public class MessageDto {
+
+    private Long chatId;
+    private Long userId;
+    private String textMessage;
     private LocalDateTime createdAt;
 }

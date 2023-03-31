@@ -15,18 +15,45 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class ChatService {
-
     private final ChatRepository chatRepository;
     private final UserService userService;
 
     public List<ChatDto> findAll() {
         List<ChatEntity> chatEntities = chatRepository.findAll();
         return chatEntities.stream()
-                .map(chatEntity -> convertChatEntityToChatDto(chatEntity))
+                .map(this::mapChatEntityToChatDto)
                 .toList();
     }
 
-    private ChatDto convertChatEntityToChatDto(ChatEntity chatEntity) {
+    public ChatDto findById(Long id) {
+        Optional<ChatEntity> chatsByIdOptional = chatRepository.findById(id);
+        return chatsByIdOptional.map(this::mapChatEntityToChatDto)
+                .orElseThrow(() -> new ChatNotFoundException(id));
+    }
+
+    public ChatEntity findChatEntityById(Long id) {
+        return chatRepository.findById(id)
+                .orElseThrow(() -> new ChatNotFoundException(id));
+    }
+
+    public String save(ChatDto chatDto) {
+        Optional<ChatEntity> chatEntityOptional = chatRepository.findByChatName(chatDto.getChatName());
+        if (chatEntityOptional.isPresent()) {
+            throw new ChatAlreadyExistException(chatDto.getChatName());
+        }
+
+        ChatEntity chatEntity = mapChatDtoToChatEntity(chatDto);
+        chatRepository.save(chatEntity);
+        return String.format("created new chat id: %d", chatEntity.getId());
+    }
+
+    public Optional<ChatEntity> findChatEntityOptionalFromChatRepository(MessageDto messageDto) {
+        return chatRepository.findById(messageDto.getChatId());
+    }
+
+    //-----------------------------------------------------------------------------------------
+
+    private ChatDto mapChatEntityToChatDto(ChatEntity chatEntity) {
         List<Long> usersList = chatEntity.getUsersList()
                 .stream()
                 .map(UserEntity::getId)
@@ -38,36 +65,7 @@ public class ChatService {
         );
     }
 
-    public ChatDto findById(Long id) {
-        Optional<ChatEntity> chatsByIdOptional = chatRepository.findById(id);
-        return chatsByIdOptional.map(chatEntity -> convert(chatEntity))
-                .orElseThrow(() -> new ChatNotFoundException(id));
-    }
-
-    public ChatDto convert(ChatEntity chatEntity) {
-        List<Long> userIds = chatEntity.getUsersList()
-                .stream()
-                .map(UserEntity::getId)
-                .toList();
-        return new ChatDto(
-                chatEntity.getChatName(),
-                userIds,
-                chatEntity.getCreatedAt()
-        );
-    }
-
-    public Long save(ChatDto chatDto) {
-        Optional<ChatEntity> chatEntityOptional = chatRepository.findByChatName(chatDto.getChatName());
-        if (chatEntityOptional.isPresent()) {
-            throw new ChatAlreadyExistException(chatDto.getChatName());
-        }
-
-        ChatEntity chatEntity = convertToChatEntity(chatDto);
-        chatRepository.save(chatEntity);
-        return chatEntity.getId();
-    }
-
-    private ChatEntity convertToChatEntity(ChatDto chatDto) {
+    private ChatEntity mapChatDtoToChatEntity(ChatDto chatDto) {
         ChatEntity chatEntity = new ChatEntity();
 
         chatEntity.setChatName(chatDto.getChatName());

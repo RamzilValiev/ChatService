@@ -6,11 +6,10 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import ru.iteco.test.exception.chat.ChatAlreadyExistException;
 import ru.iteco.test.exception.chat.ChatNotFoundException;
-import ru.iteco.test.model.dto.ChatErrorResponse;
+import ru.iteco.test.model.response.ChatErrorResponse;
 
 @ControllerAdvice
 public class ChatExceptionHandler {
-
     @ExceptionHandler
     private ResponseEntity<ChatErrorResponse> handleException(ChatNotFoundException e) {
         ChatErrorResponse chatErrorResponse = new ChatErrorResponse(e.getMessage());

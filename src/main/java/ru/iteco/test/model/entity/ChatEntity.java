@@ -1,6 +1,7 @@
 package ru.iteco.test.model.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,13 +18,13 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChatEntity {
-
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "name_chat")
+    @NotEmpty(message = "ChatName should not be empty")
     private String chatName;
 
     @Column(name = "created_at")
@@ -31,6 +32,7 @@ public class ChatEntity {
     private LocalDateTime createdAt;
 
     @ManyToMany(cascade = CascadeType.ALL)
+    @NotEmpty(message = "usersList should not be empty")
     @JoinTable(
             name = "chats_users",
             joinColumns = @JoinColumn(name = "chat_id"),

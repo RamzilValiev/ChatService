@@ -1,4 +1,5 @@
-package ru.iteco.test.model.dto;
+package ru.iteco.test.model.response;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,6 +8,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class ChatErrorResponse {
+public class UserErrorResponse {
     private String message;
 }
