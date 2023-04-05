@@ -12,7 +12,6 @@ import java.util.List;
 @RequestMapping("/users")
 @RequiredArgsConstructor //TODO delete, создает конструктор для полей требующих инициализации
 public class UserController {
-
     private final UserService userService;
 
     @GetMapping()
@@ -27,7 +26,7 @@ public class UserController {
 
     @PostMapping("/add")
     @ResponseStatus(HttpStatus.CREATED)
-    public Long createNewUser(@RequestBody UserDto userDto) {
+    public String createNewUser(@RequestBody UserDto userDto) {
         return userService.save(userDto);
     }
 }

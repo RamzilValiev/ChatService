@@ -6,11 +6,10 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import ru.iteco.test.exception.user.UserAlreadyExistException;
 import ru.iteco.test.exception.user.UserNotFoundException;
-import ru.iteco.test.model.dto.UserErrorResponse;
+import ru.iteco.test.model.response.UserErrorResponse;
 
 @ControllerAdvice
 public class UserExceptionHandler {
-
     @ExceptionHandler
     private ResponseEntity<UserErrorResponse> handleException(UserNotFoundException e) {
         UserErrorResponse userErrorResponse = new UserErrorResponse(e.getMessage());

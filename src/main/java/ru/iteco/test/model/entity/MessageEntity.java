@@ -11,23 +11,31 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "users")
+@Table(name = "messages")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserEntity {
+public class MessageEntity {
+
     @Id
     @Column(name = "id")
-    @JoinColumn(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_name")
-    @NotEmpty(message = "UserName should not be empty")
-    private String userName;
+    @Column(name = "text_message")
+    @NotEmpty(message = "Message should not be empty")
+    private String textMessage;
 
     @Column(name = "created_at")
     @CreationTimestamp
     private LocalDateTime createdAt;
+
+    @OneToOne
+    @JoinColumn(name = "chat_id", referencedColumnName = "id")
+    private ChatEntity chatEntity;
+
+    @OneToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private UserEntity userEntity;
 }

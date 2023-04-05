@@ -15,7 +15,6 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
 
@@ -37,18 +36,18 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException(id));
     }
 
-    public Long save(UserDto userDto) {
+    public String save(UserDto userDto) {
         Optional<UserEntity> userEntityOptional = userRepository.findByUserName(userDto.getUserName());
         if (userEntityOptional.isPresent()) {
             throw new UserAlreadyExistException(userDto.getUserName());
         }
 
-        UserEntity userEntity = convertToUserEntity(userDto);
+        UserEntity userEntity = mapToUserEntity(userDto);
         userRepository.save(userEntity);
-        return userEntity.getId();
+        return String.format("created new user id: %d", userEntity.getId());
     }
 
-    private UserEntity convertToUserEntity(UserDto userDto) {
+    private UserEntity mapToUserEntity(UserDto userDto) {
         return modelMapper.map(userDto, UserEntity.class);
     }
 }
