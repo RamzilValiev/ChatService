@@ -1,9 +1,11 @@
 package ru.iteco.test.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.iteco.test.exception.chat.ChatAlreadyExistException;
 import ru.iteco.test.exception.chat.ChatNotFoundException;
+import ru.iteco.test.exception.user.UserNotFoundException;
 import ru.iteco.test.model.dto.ChatDto;
 import ru.iteco.test.model.entity.ChatEntity;
 import ru.iteco.test.model.entity.UserEntity;
@@ -47,11 +49,18 @@ public class ChatService {
         return String.format("created new chat id: %d", chatEntity.getId());
     }
 
-    public Optional<ChatEntity> findChatEntityOptionalFromChatRepository(MessageDto messageDto) {
-        return chatRepository.findById(messageDto.getChatId());
+    public List<ChatDto> get(Long userId, Pageable pageable) {
+        if (userService.findById(userId) == null) {
+            throw new UserNotFoundException(userId);
+        }
+        return chatRepository.findChatEntitiesByUserId(userId, pageable)
+                .stream()
+                .map(chatEntity -> new ChatDto(
+                        chatEntity.getChatName(),
+                        List.of(userId),
+                        chatEntity.getCreatedAt()))
+                .toList();
     }
-
-    //-----------------------------------------------------------------------------------------
 
     private ChatDto mapChatEntityToChatDto(ChatEntity chatEntity) {
         List<Long> usersList = chatEntity.getUsersList()
