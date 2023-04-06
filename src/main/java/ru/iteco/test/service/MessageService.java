@@ -1,6 +1,7 @@
 package ru.iteco.test.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.iteco.test.exception.message.MessageNotFoundException;
 import ru.iteco.test.model.dto.MessageDto;
@@ -37,6 +38,19 @@ public class MessageService {
 
         messageRepository.save(messageEntity);
         return String.format("created new message id: %d", messageEntity.getId());
+    }
+
+    public List<MessageDto> getMessages(Long chatId, Pageable pageable) {
+        chatService.findById(chatId);
+
+        return messageRepository.findByChatEntityId(chatId, pageable)
+                .stream()
+                .map(messageEntity -> new MessageDto(
+                        messageEntity.getChatEntity().getId(),
+                        messageEntity.getUserEntity().getId(),
+                        messageEntity.getTextMessage(),
+                        messageEntity.getCreatedAt()))
+                .toList();
     }
 
     private MessageEntity mapMessageDtoToMessageEntity(MessageDto messageDto) {
