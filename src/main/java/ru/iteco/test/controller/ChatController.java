@@ -33,7 +33,7 @@ public class ChatController {
         return chatService.save(chatDto);
     }
 
-    @PostMapping("/get")
+    @GetMapping("/get")
     public List<ChatDto> getUserChats(@RequestParam("userId") Long userId,
                                       @PageableDefault(
                                               size = Integer.MAX_VALUE,

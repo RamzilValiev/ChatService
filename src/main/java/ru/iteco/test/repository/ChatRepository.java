@@ -11,14 +11,15 @@ import java.util.Optional;
 
 @Repository
 public interface ChatRepository extends JpaRepository<ChatEntity, Long> {
+
     Optional<ChatEntity> findByChatName(String userName);
 
     @Query(
             value = """
                     SELECT c.id, c.name_chat, MAX(m.created_at) AS created_at
                     FROM chats c
-                             JOIN chats_users cu ON c.id = cu.chat_id
-                             JOIN messages m ON c.id = m.chat_id
+                    JOIN chats_users cu ON c.id = cu.chat_id
+                    LEFT JOIN messages m ON c.id = m.chat_id
                     WHERE cu.user_id = :userId
                     GROUP BY c.id, c.name_chat
                     """,
