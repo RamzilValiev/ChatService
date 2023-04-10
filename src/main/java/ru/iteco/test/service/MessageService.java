@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.iteco.test.exception.message.MessageNotFoundException;
+import ru.iteco.test.model.dto.ChatInfoDto;
 import ru.iteco.test.model.dto.MessageDto;
 import ru.iteco.test.model.entity.ChatEntity;
 import ru.iteco.test.model.entity.MessageEntity;
@@ -51,6 +52,18 @@ public class MessageService {
                         messageEntity.getTextMessage(),
                         messageEntity.getCreatedAt()))
                 .toList();
+    }
+
+    public ChatInfoDto getLikeMessages(Long chatId, String text) {
+        String chatName = chatService.findById(chatId).getChatName();
+
+        Long count = messageRepository.countByChatEntityIdAndTextMessageContainingIgnoreCase(chatId, text);
+
+        return new ChatInfoDto(
+                chatName,
+                text,
+                count
+        );
     }
 
     private MessageEntity mapMessageDtoToMessageEntity(MessageDto messageDto) {

@@ -40,6 +40,6 @@ public class ChatController {
                                               sort = "created_at",
                                               direction = Sort.Direction.DESC
                                       ) Pageable pageable) {
-        return chatService.get(userId, pageable);
+        return chatService.getUserChats(userId, pageable);
     }
 }

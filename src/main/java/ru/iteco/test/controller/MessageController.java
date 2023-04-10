@@ -6,6 +6,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.iteco.test.model.dto.ChatInfoDto;
 import ru.iteco.test.model.dto.MessageDto;
 import ru.iteco.test.service.MessageService;
 
@@ -41,5 +42,11 @@ public class MessageController {
                                                 direction = Sort.Direction.DESC
                                         ) Pageable pageable) {
         return messageService.getMessages(chatId, pageable);
+    }
+
+    @GetMapping("/entry/count")
+    public ChatInfoDto getLikeMessages(@RequestParam("chatId") Long chatId,
+                                       @RequestParam("text") String text) {
+        return messageService.getLikeMessages(chatId, text);
     }
 }
