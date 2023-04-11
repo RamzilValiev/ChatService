@@ -7,7 +7,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class UserIdDto {
+public class ChatInfoDto {
 
-    private Long userId;
+    private String chatName;
+    private String text;
+    private Long found;
 }

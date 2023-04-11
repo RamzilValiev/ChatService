@@ -11,4 +11,6 @@ import java.util.List;
 public interface MessageRepository extends JpaRepository<MessageEntity, Long> {
 
     List<MessageEntity> findByChatEntityId(Long chatId, Pageable pageable);
+
+    Long countByChatEntityIdAndTextMessageContainingIgnoreCase(Long chatId, String text);
 }
