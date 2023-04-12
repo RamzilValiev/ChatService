@@ -21,23 +21,23 @@ import java.util.List;
 @RestController
 @RequestMapping("/chats")
 @RequiredArgsConstructor
-@Tag(name = "Чаты", description = "Методы чата")
+@Tag(name = "Chats", description = "Chat Methods")
 public class ChatController {
     private final ChatService chatService;
 
-    @Operation(summary = "Получить все чаты", description = "Возвращает список всех чатов")
-    @ApiResponse(responseCode = "200", description = "Операция выполнена, чаты получены")
+    @Operation(summary = "Get all chats", description = "Returns a list of all chats")
+    @ApiResponse(responseCode = "200", description = "Success")
     @GetMapping()
     public List<ChatDto> getChats() {
         return chatService.findAll();
     }
 
-    @Operation(summary = "Получить чат по id (URL)", description = "Возвращает один чат")
+    @Operation(summary = "Get chat by id (URL)", description = "Returns one chat")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Операция выполнена, чат получен"),
+            @ApiResponse(responseCode = "200", description = "Success"),
             @ApiResponse(
                     responseCode = "404",
-                    description = "Чат не найден",
+                    description = "Chat not found",
                     content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))
             )
     })
@@ -46,12 +46,12 @@ public class ChatController {
         return chatService.findById(id);
     }
 
-    @Operation(summary = "Создать новый чат", description = "Создает новый чат")
+    @Operation(summary = "Create a new chat", description = "Creates a new chat")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Чат успешно создан"),
+            @ApiResponse(responseCode = "201", description = "Success"),
             @ApiResponse(
                     responseCode = "409",
-                    description = "Чат с таким именем уже существует",
+                    description = "Chat with the same name already exists",
                     content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
     })
     @PostMapping("/add")
@@ -60,12 +60,12 @@ public class ChatController {
         return chatService.save(chatDto);
     }
 
-    @Operation(summary = "Получить чат по id", description = "Возвращает один чат используется вместе с пагинацией")
+    @Operation(summary = "Get chat by id", description = "Returns one chat used together with pagination")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Операция выполнена"),
+            @ApiResponse(responseCode = "200", description = "Success"),
             @ApiResponse(
                     responseCode = "404",
-                    description = "Чат не найден",
+                    description = "Chat not found",
                     content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))
             )
     })

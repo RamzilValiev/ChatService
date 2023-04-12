@@ -22,23 +22,23 @@ import java.util.List;
 @RestController
 @RequestMapping("/messages")
 @RequiredArgsConstructor
-@Tag(name = "Сообщения", description = "Методы сообщений")
+@Tag(name = "Messages", description = "Message Methods")
 public class MessageController {
     private final MessageService messageService;
 
-    @Operation(summary = "Получить сообщения", description = "Возвращает все сообщения")
-    @ApiResponse(responseCode = "200", description = "Операция выполнена")
+    @Operation(summary = "Get messages", description = "Returns all messages")
+    @ApiResponse(responseCode = "200", description = "Success")
     @GetMapping()
     public List<MessageDto> getMessages() {
         return messageService.findAll();
     }
 
-    @Operation(summary = "Получить сообщение по id (URL)", description = "Возвращает одно сообщение")
+    @Operation(summary = "Get message by id (URL)", description = "Returns one message")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Операция выполнена"),
+            @ApiResponse(responseCode = "200", description = "Success"),
             @ApiResponse(
                     responseCode = "404",
-                    description = "Сообщение не найдено",
+                    description = "Message not found",
                     content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
     })
     @GetMapping("/{id}")
@@ -46,12 +46,12 @@ public class MessageController {
         return messageService.findById(id);
     }
 
-    @Operation(summary = "Создать новое сообщение", description = "Создает новое сообщение")
+    @Operation(summary = "Create new message", description = "Creates a new message")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Операция выполнена"),
+            @ApiResponse(responseCode = "201", description = "Success"),
             @ApiResponse(
                     responseCode = "404",
-                    description = "Пользователь и/или чат не найден",
+                    description = "User and/or chat not found",
                     content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
     })
     @PostMapping("/add")
@@ -60,12 +60,12 @@ public class MessageController {
         return messageService.save(messageDto);
     }
 
-    @Operation(summary = "Получить все сообщения в чате", description = "Возвращает сообщения в данном чате")
+    @Operation(summary = "Get all messages in a chat", description = "Returns the messages in the given chat")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Операция выполнена"),
+            @ApiResponse(responseCode = "200", description = "Success"),
             @ApiResponse(
                     responseCode = "404",
-                    description = "Чат не найден",
+                    description = "Chat not found",
                     content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
     })
     @GetMapping("/get")
@@ -78,12 +78,12 @@ public class MessageController {
         return messageService.getMessages(chatId, pageable);
     }
 
-    @Operation(summary = "Получить сообщения в чате по фрагменту сообщения", description = "Возвращает количество совпадений по сообщениям в чате")
+    @Operation(summary = "Get chat messages by message fragment", description = "Returns the number of matches for messages in a chat")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Операция выполнена"),
+            @ApiResponse(responseCode = "200", description = "Success"),
             @ApiResponse(
                     responseCode = "404",
-                    description = "Чат не найден",
+                    description = "Chat not found",
                     content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
     })
     @GetMapping("/entry/count")

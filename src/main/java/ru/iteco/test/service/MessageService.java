@@ -1,6 +1,7 @@
 package ru.iteco.test.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.iteco.test.exception.message.MessageNotFoundException;
@@ -16,6 +17,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MessageService {
     private final MessageRepository messageRepository;
     private final ChatService chatService;
@@ -35,9 +37,15 @@ public class MessageService {
     }
 
     public String save(MessageDto messageDto) {
-        MessageEntity messageEntity = mapMessageDtoToMessageEntity(messageDto);
+        log.info(String.format("Received request to save message with text: '%s' in chat: id_%d from user: id_%d",
+                messageDto.textMessage(), messageDto.chatId(), messageDto.userId()));
 
+        MessageEntity messageEntity = mapMessageDtoToMessageEntity(messageDto);
         messageRepository.save(messageEntity);
+
+        log.info(String.format("Message with text: '%s' in chat: id_%d from user: id_%d saved in database under id: %d",
+                messageDto.textMessage(), messageDto.chatId(), messageDto.userId(), messageEntity.getId()));
+
         return String.format("created new message id: %d", messageEntity.getId());
     }
 
@@ -55,7 +63,7 @@ public class MessageService {
     }
 
     public ChatInfoDto getLikeMessages(Long chatId, String text) {
-        String chatName = chatService.findById(chatId).getChatName();
+        String chatName = chatService.findById(chatId).chatName();
 
         Long count = messageRepository.countByChatEntityIdAndTextMessageContainingIgnoreCase(chatId, text);
 
@@ -67,13 +75,13 @@ public class MessageService {
     }
 
     private MessageEntity mapMessageDtoToMessageEntity(MessageDto messageDto) {
-        ChatEntity chatEntity = chatService.findChatEntityById(messageDto.getChatId());
-        UserEntity userEntity = userService.findUserEntityById(messageDto.getUserId());
+        ChatEntity chatEntity = chatService.findChatEntityById(messageDto.chatId());
+        UserEntity userEntity = userService.findUserEntityById(messageDto.userId());
 
         MessageEntity messageEntity = new MessageEntity();
 
-        messageEntity.setTextMessage(messageDto.getTextMessage());
-        messageEntity.setCreatedAt(messageDto.getCreatedAt());
+        messageEntity.setTextMessage(messageDto.textMessage());
+        messageEntity.setCreatedAt(messageDto.createdAt());
         messageEntity.setChatEntity(chatEntity);
         messageEntity.setUserEntity(userEntity);
 
