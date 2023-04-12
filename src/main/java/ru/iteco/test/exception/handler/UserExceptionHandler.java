@@ -6,19 +6,21 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import ru.iteco.test.exception.user.UserAlreadyExistException;
 import ru.iteco.test.exception.user.UserNotFoundException;
-import ru.iteco.test.model.response.UserErrorResponse;
+import ru.iteco.test.model.dto.ErrorResponseDto;
+
+import java.time.LocalDateTime;
 
 @ControllerAdvice
 public class UserExceptionHandler {
     @ExceptionHandler
-    private ResponseEntity<UserErrorResponse> handleException(UserNotFoundException e) {
-        UserErrorResponse userErrorResponse = new UserErrorResponse(e.getMessage());
-        return new ResponseEntity<>(userErrorResponse, HttpStatus.NOT_FOUND);
+    private ResponseEntity<ErrorResponseDto> handleException(UserNotFoundException e) {
+        ErrorResponseDto errorResponse = new ErrorResponseDto(e.getMessage(), LocalDateTime.now());
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler
-    private ResponseEntity<UserErrorResponse> handleException(UserAlreadyExistException e) {
-        UserErrorResponse response = new UserErrorResponse(e.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+    private ResponseEntity<ErrorResponseDto> handleException(UserAlreadyExistException e) {
+        ErrorResponseDto errorResponse = new ErrorResponseDto(e.getMessage(), LocalDateTime.now());
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
 }
