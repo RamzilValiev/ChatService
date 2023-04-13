@@ -18,23 +18,23 @@ import java.util.List;
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
-@Tag(name = "Пользователи", description = "методы пользователя")
+@Tag(name = "Users", description = "User Methods")
 public class UserController {
     private final UserService userService;
 
-    @Operation(summary = "Получить всех пользователей", description = "Возвращает всех пользователей")
-    @ApiResponse(responseCode = "200", description = "Операция выполнена, пользователи получены")
+    @Operation(summary = "Get all users", description = "Returns all users")
+    @ApiResponse(responseCode = "200", description = "Success")
     @GetMapping()
     public List<UserDto> getUsers() {
         return userService.findAll();
     }
 
-    @Operation(summary = "Получить пользователя по id", description = "Возвращает одного пользователя")
+    @Operation(summary = "Get user by id", description = "Returns one user")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Пользователь найден"),
+            @ApiResponse(responseCode = "200", description = "Success"),
             @ApiResponse(
                     responseCode = "404",
-                    description = "Пользователь не найден",
+                    description = "User is not found",
                     content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
     })
     @GetMapping("/{id}")
@@ -42,12 +42,12 @@ public class UserController {
         return userService.findById(id);
     }
 
-    @Operation(summary = "Создать нового пользователя", description = "Создает нового пользователя")
+    @Operation(summary = "Create a new user", description = "Creates a new user")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Пользователь успешно создан"),
+            @ApiResponse(responseCode = "201", description = "Success"),
             @ApiResponse(
                     responseCode = "409",
-                    description = "Пользователь с таким именем уже существует",
+                    description = "User with the same name already exists",
                     content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
     })
     @PostMapping("/add")

@@ -1,7 +1,7 @@
 package ru.iteco.test.service;
 
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.iteco.test.exception.user.UserAlreadyExistException;
 import ru.iteco.test.exception.user.UserNotFoundException;
@@ -14,9 +14,9 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
     private final UserRepository userRepository;
-    private final ModelMapper modelMapper;
 
     public List<UserDto> findAll() {
         List<UserEntity> userEntities = userRepository.findAll();
@@ -37,17 +37,26 @@ public class UserService {
     }
 
     public String save(UserDto userDto) {
-        Optional<UserEntity> userEntityOptional = userRepository.findByUserName(userDto.getUserName());
+        log.info(String.format("Request received to save user with name: '%s'", userDto.userName()));
+
+        Optional<UserEntity> userEntityOptional = userRepository.findByUserName(userDto.userName());
         if (userEntityOptional.isPresent()) {
-            throw new UserAlreadyExistException(userDto.getUserName());
+            throw new UserAlreadyExistException(userDto.userName());
         }
 
         UserEntity userEntity = mapToUserEntity(userDto);
         userRepository.save(userEntity);
+
+        log.info(String.format("User with name: %s saved in database under id: %d", userDto.userName(), userEntity.getId()));
         return String.format("created new user id: %d", userEntity.getId());
     }
 
     private UserEntity mapToUserEntity(UserDto userDto) {
-        return modelMapper.map(userDto, UserEntity.class);
+        UserEntity userEntity = new UserEntity();
+
+        userEntity.setUserName(userDto.userName());
+        userEntity.setCreatedAt(userDto.createdAt());
+
+        return userEntity;
     }
 }

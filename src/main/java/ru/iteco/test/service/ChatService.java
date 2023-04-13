@@ -1,6 +1,7 @@
 package ru.iteco.test.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.iteco.test.exception.chat.ChatAlreadyExistException;
@@ -15,6 +16,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ChatService {
     private final ChatRepository chatRepository;
     private final UserService userService;
@@ -38,13 +40,17 @@ public class ChatService {
     }
 
     public String save(ChatDto chatDto) {
-        Optional<ChatEntity> chatEntityOptional = chatRepository.findByChatName(chatDto.getChatName());
+        log.info(String.format("Received a request to create a chat named: %s", chatDto.chatName()));
+
+        Optional<ChatEntity> chatEntityOptional = chatRepository.findByChatName(chatDto.chatName());
         if (chatEntityOptional.isPresent()) {
-            throw new ChatAlreadyExistException(chatDto.getChatName());
+            throw new ChatAlreadyExistException(chatDto.chatName());
         }
 
         ChatEntity chatEntity = mapChatDtoToChatEntity(chatDto);
         chatRepository.save(chatEntity);
+
+        log.info(String.format("Chat named: %s saved to database with id: %d",chatDto.chatName(), chatEntity.getId()));
         return String.format("created new chat id: %d", chatEntity.getId());
     }
 
@@ -75,8 +81,8 @@ public class ChatService {
     private ChatEntity mapChatDtoToChatEntity(ChatDto chatDto) {
         ChatEntity chatEntity = new ChatEntity();
 
-        chatEntity.setChatName(chatDto.getChatName());
-        List<Long> usersIds = chatDto.getUsersList();
+        chatEntity.setChatName(chatDto.chatName());
+        List<Long> usersIds = chatDto.usersList();
 
         Optional.ofNullable(usersIds).ifPresent(longs -> {
             List<UserEntity> userEntities = longs.stream()
