@@ -37,14 +37,14 @@ public class MessageService {
     }
 
     public String save(MessageDto messageDto) {
-        log.info(String.format("Received request to save message with text: '%s' in chat: id_%d from user: id_%d",
-                messageDto.textMessage(), messageDto.chatId(), messageDto.userId()));
+        log.info("Received request to save message with text: '{}' in chat: id_{} from user: id_{}",
+                messageDto.textMessage(), messageDto.chatId(), messageDto.userId());
 
         MessageEntity messageEntity = mapMessageDtoToMessageEntity(messageDto);
         messageRepository.save(messageEntity);
 
-        log.info(String.format("Message with text: '%s' in chat: id_%d from user: id_%d saved in database under id: %d",
-                messageDto.textMessage(), messageDto.chatId(), messageDto.userId(), messageEntity.getId()));
+        log.info("Message with text: '{}' in chat: id_{} from user: id_{} saved in database under id: {}",
+                messageDto.textMessage(), messageDto.chatId(), messageDto.userId(), messageEntity.getId());
 
         return String.format("created new message id: %d", messageEntity.getId());
     }

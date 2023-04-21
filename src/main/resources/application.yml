@@ -26,3 +26,6 @@ logging:
   pattern:
     dateformat: dd-MM-yyyy HH:mm:ss
     file: "%d{dd-MM-yyyy HH:mm:ss} %-5level [%thread] %logger{36} - %msg%n"
+
+jwt:
+  secret: "k1skSKKks_)0992kdsfl#@kdgjl!kdjg{kjdj,zjjjgfdjgj32JKHKJHjKksjkdhgkjhdksjKK333"

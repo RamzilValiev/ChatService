@@ -24,7 +24,7 @@ public class ChatEntity {
     private Long id;
 
     @Column(name = "name_chat")
-    @NotEmpty(message = "ChatName should not be empty")
+    @NotEmpty(message = "Chat name should not be empty")
     private String chatName;
 
     @Column(name = "created_at")

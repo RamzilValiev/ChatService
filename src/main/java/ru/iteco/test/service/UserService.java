@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.iteco.test.exception.user.UserAlreadyExistException;
+import ru.iteco.test.exception.authentication.UserNotFoundByNameException;
 import ru.iteco.test.exception.user.UserNotFoundException;
 import ru.iteco.test.model.dto.UserDto;
 import ru.iteco.test.model.entity.UserEntity;
@@ -21,13 +22,13 @@ public class UserService {
     public List<UserDto> findAll() {
         List<UserEntity> userEntities = userRepository.findAll();
         return userEntities.stream()
-                .map(userEntity -> new UserDto(userEntity.getUserName(), userEntity.getCreatedAt()))
+                .map(userEntity -> new UserDto(userEntity.getUserName(), userEntity.getCreatedAt(), userEntity.getPassword()))
                 .toList();
     }
 
     public UserDto findById(Long id) {
         return userRepository.findById(id)
-                .map(userEntity -> new UserDto(userEntity.getUserName(), userEntity.getCreatedAt()))
+                .map(userEntity -> new UserDto(userEntity.getUserName(), userEntity.getCreatedAt(), userEntity.getPassword()))
                 .orElseThrow(() -> new UserNotFoundException(id));
     }
 
@@ -36,8 +37,13 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException(id));
     }
 
+    public Optional<UserEntity> findUserByUserName(String userName) {
+       return Optional.ofNullable(userRepository.findByUserName(userName)
+               .orElseThrow(() -> new UserNotFoundByNameException(userName)));
+    }
+
     public String save(UserDto userDto) {
-        log.info(String.format("Request received to save user with name: '%s'", userDto.userName()));
+        log.info("Request received to save user with name: '{}'", userDto.userName());
 
         Optional<UserEntity> userEntityOptional = userRepository.findByUserName(userDto.userName());
         if (userEntityOptional.isPresent()) {
@@ -47,15 +53,28 @@ public class UserService {
         UserEntity userEntity = mapToUserEntity(userDto);
         userRepository.save(userEntity);
 
-        log.info(String.format("User with name: %s saved in database under id: %d", userDto.userName(), userEntity.getId()));
+        log.info("User with name: {} saved in database under id: {}", userDto.userName(), userEntity.getId());
         return String.format("created new user id: %d", userEntity.getId());
     }
 
-    private UserEntity mapToUserEntity(UserDto userDto) {
+    public String save(UserEntity userEntity) {
+        Optional<UserEntity> userName = userRepository.findByUserName(userEntity.getUserName());
+        if (userName.isPresent()) {
+            throw new UserAlreadyExistException(userEntity.getUserName());
+        }
+
+        userRepository.save(userEntity);
+
+        return String.format("created new user id: %d", userEntity.getId());
+    }
+
+    public UserEntity mapToUserEntity(UserDto userDto) {
         UserEntity userEntity = new UserEntity();
 
         userEntity.setUserName(userDto.userName());
         userEntity.setCreatedAt(userDto.createdAt());
+        userEntity.setPassword(userDto.password());
+        userEntity.setRole("ROLE_USER");
 
         return userEntity;
     }

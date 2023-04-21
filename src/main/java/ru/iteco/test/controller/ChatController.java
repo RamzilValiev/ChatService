@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.iteco.test.model.dto.ChatDto;
 import ru.iteco.test.model.dto.ErrorResponseDto;
@@ -56,7 +57,7 @@ public class ChatController {
     })
     @PostMapping("/add")
     @ResponseStatus(HttpStatus.CREATED)
-    public String createNewChat(@RequestBody ChatDto chatDto) {
+    public String createNewChat(@RequestBody @Validated ChatDto chatDto) {
         return chatService.save(chatDto);
     }
 

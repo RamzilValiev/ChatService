@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.iteco.test.model.dto.ErrorResponseDto;
 import ru.iteco.test.model.dto.UserDto;
@@ -52,7 +53,7 @@ public class UserController {
     })
     @PostMapping("/add")
     @ResponseStatus(HttpStatus.CREATED)
-    public String createNewUser(@RequestBody UserDto userDto) {
+    public String createNewUser(@RequestBody @Validated UserDto userDto) {
         return userService.save(userDto);
     }
 }

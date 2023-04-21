@@ -24,10 +24,16 @@ public class UserEntity {
     private Long id;
 
     @Column(name = "user_name")
-    @NotEmpty(message = "UserName should not be empty")
+    @NotEmpty(message = "User name should not be empty")
     private String userName;
 
     @Column(name = "created_at")
     @CreationTimestamp
     private LocalDateTime createdAt;
+
+    @Column(name = "password")
+    private String password;
+
+    @Column(name = "role")
+    private String role;
 }
