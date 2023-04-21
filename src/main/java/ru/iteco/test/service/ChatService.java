@@ -40,7 +40,7 @@ public class ChatService {
     }
 
     public String save(ChatDto chatDto) {
-        log.info(String.format("Received a request to create a chat named: %s", chatDto.chatName()));
+        log.info("Received a request to create a chat named: {}", chatDto.chatName());
 
         Optional<ChatEntity> chatEntityOptional = chatRepository.findByChatName(chatDto.chatName());
         if (chatEntityOptional.isPresent()) {
@@ -50,7 +50,7 @@ public class ChatService {
         ChatEntity chatEntity = mapChatDtoToChatEntity(chatDto);
         chatRepository.save(chatEntity);
 
-        log.info(String.format("Chat named: %s saved to database with id: %d",chatDto.chatName(), chatEntity.getId()));
+        log.info("Chat named: {} saved to database with id: {}",chatDto.chatName(), chatEntity.getId());
         return String.format("created new chat id: %d", chatEntity.getId());
     }
 
