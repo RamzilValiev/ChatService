@@ -37,9 +37,9 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException(id));
     }
 
-    public Optional<UserEntity> findUserByUserName(String userName) {
-       return Optional.ofNullable(userRepository.findByUserName(userName)
-               .orElseThrow(() -> new UserNotFoundByNameException(userName)));
+    public UserEntity findUserByUserName(String userName) {
+       return userRepository.findByUserName(userName)
+               .orElseThrow(() -> new UserNotFoundByNameException(userName));
     }
 
     public String save(UserDto userDto) {
@@ -57,15 +57,13 @@ public class UserService {
         return String.format("created new user id: %d", userEntity.getId());
     }
 
-    public String save(UserEntity userEntity) {
+    public void save(UserEntity userEntity) {
         Optional<UserEntity> userName = userRepository.findByUserName(userEntity.getUserName());
         if (userName.isPresent()) {
             throw new UserAlreadyExistException(userEntity.getUserName());
         }
 
         userRepository.save(userEntity);
-
-        return String.format("created new user id: %d", userEntity.getId());
     }
 
     public UserEntity mapToUserEntity(UserDto userDto) {

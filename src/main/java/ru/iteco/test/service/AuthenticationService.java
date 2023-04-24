@@ -6,11 +6,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.iteco.test.exception.authentication.PasswordIncorrectException;
 import ru.iteco.test.model.dto.AuthenticationDto;
+import ru.iteco.test.model.dto.JwtTokenDto;
 import ru.iteco.test.model.dto.UserDto;
 import ru.iteco.test.model.entity.UserEntity;
 
-import java.util.Collections;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -21,7 +20,7 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public Map<String, String> registration(UserDto userDto) {
+    public JwtTokenDto registration(UserDto userDto) {
         log.info("A request was received to register a user with the name: {}", userDto.userName());
 
         UserEntity userEntity = userService.mapToUserEntity(userDto);
@@ -34,23 +33,18 @@ public class AuthenticationService {
         log.info("user named: {} is registered in the database by id: {}", userEntity.getUserName(), userEntity.getId());
 
         String token = jwtService.generateToken(userDto.userName());
-        return Map.of("jwt-token", token);
+        return new JwtTokenDto(token);
     }
 
-    public Map<String, String> authorization(AuthenticationDto authenticationDto) {
-        Optional<UserEntity> userEntityOptional = userService.findUserByUserName(authenticationDto.userName());
+    public JwtTokenDto authorization(AuthenticationDto authenticationDto) {
+        UserEntity userEntity = userService.findUserByUserName(authenticationDto.userName());
 
-        if (userEntityOptional.isPresent()) {
-            String password = userEntityOptional.get().getPassword();
-            boolean matches = bCryptPasswordEncoder.matches(authenticationDto.password(), password);
-
-            if (matches) {
-                String token = jwtService.generateToken(authenticationDto.userName());
-                return Map.of("jwt-token", token);
-            } else {
-                throw new PasswordIncorrectException(authenticationDto.userName());
-            }
-        }
-        return Collections.emptyMap();
+        return Optional.of(userEntity)
+                .map(UserEntity::getPassword)
+                .map(password -> bCryptPasswordEncoder.matches(authenticationDto.password(), password))
+                .filter(Boolean::booleanValue)
+                .map(m -> jwtService.generateToken(authenticationDto.userName()))
+                .map(JwtTokenDto::new)
+                .orElseThrow(() -> new PasswordIncorrectException(authenticationDto.userName()));
     }
 }

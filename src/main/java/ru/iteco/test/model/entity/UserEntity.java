@@ -32,8 +32,10 @@ public class UserEntity {
     private LocalDateTime createdAt;
 
     @Column(name = "password")
+    @NotEmpty(message = "Password should not be empty")
     private String password;
 
     @Column(name = "role")
+    @NotEmpty(message = "Role should not be empty")
     private String role;
 }

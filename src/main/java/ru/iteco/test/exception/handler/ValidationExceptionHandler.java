@@ -1,30 +1,33 @@
 package ru.iteco.test.exception.handler;
 
+import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
-import org.springframework.http.ResponseEntity;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.List;
 
-@ControllerAdvice
+@RestControllerAdvice
 public class ValidationExceptionHandler {
-
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<String> handleConstrainsViolationException(ConstraintViolationException e) {
+    @ResponseStatus(HttpStatus.BAD_GATEWAY)
+    public String handleConstrainsViolationException(ConstraintViolationException e) {
         List<String> errors = e.getConstraintViolations().stream()
-                .map(constraintViolation -> constraintViolation.getMessage())
+                .map(ConstraintViolation::getMessage)
                 .toList();
-        return ResponseEntity.badRequest().body(String.join(",", errors));
+        return String.join(",", errors);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<String> handleException(MethodArgumentNotValidException e) {
+    @ResponseStatus(HttpStatus.BAD_GATEWAY)
+    public String handleException(MethodArgumentNotValidException e) {
         List<String> errors = e.getAllErrors().stream()
-                .map(objectError -> objectError.getDefaultMessage())
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .toList();
-
-        return ResponseEntity.badRequest().body(String.join(", ", errors));
+        return String.join(", ", errors);
     }
 }
