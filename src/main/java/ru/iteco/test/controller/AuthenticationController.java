@@ -12,10 +12,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.iteco.test.model.dto.AuthenticationDto;
 import ru.iteco.test.model.dto.ErrorResponseDto;
+import ru.iteco.test.model.dto.JwtTokenDto;
 import ru.iteco.test.model.dto.UserDto;
 import ru.iteco.test.service.AuthenticationService;
-
-import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,7 +27,7 @@ public class AuthenticationController {
     @ApiResponse(responseCode = "201", description = "Success")
     @PostMapping("/registration")
     @ResponseStatus(HttpStatus.CREATED)
-    public Map<String, String> registration(@RequestBody @Validated UserDto userDto) {
+    public JwtTokenDto registration(@RequestBody @Validated UserDto userDto) {
         return authenticationService.registration(userDto);
     }
 
@@ -42,7 +41,7 @@ public class AuthenticationController {
             )
     })
     @PostMapping("/login")
-    public Map<String, String> authorization(@RequestBody @Validated AuthenticationDto authenticationDto) {
+    public JwtTokenDto authorization(@RequestBody @Validated AuthenticationDto authenticationDto) {
         return authenticationService.authorization(authenticationDto);
     }
 }

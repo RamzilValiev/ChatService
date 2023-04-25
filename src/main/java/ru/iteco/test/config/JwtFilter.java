@@ -16,10 +16,11 @@ import ru.iteco.test.service.JwtService;
 import ru.iteco.test.service.UserEntityDetailsService;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class JwtFilter extends OncePerRequestFilter { //TODO exceptions
+public class JwtFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserEntityDetailsService userEntityDetailsService;
 
@@ -30,11 +31,16 @@ public class JwtFilter extends OncePerRequestFilter { //TODO exceptions
 
         String authHeader = request.getHeader("Authorization");
 
-        if (authHeader != null && !authHeader.isBlank() && authHeader.startsWith("Bearer ")) {
-            String jwt = authHeader.substring(7);
+        Optional<String> jwtOptional = Optional.ofNullable(authHeader)
+                .filter(header -> !header.isBlank())
+                .filter(header -> header.startsWith("Bearer "))
+                .map(header -> header.substring(7));
+
+        if (jwtOptional.isPresent()) {
+            String jwt = jwtOptional.get();
 
             if (jwt.isBlank()) {
-                response.sendError(response.SC_BAD_REQUEST, "Invalid JWT token in Bearer header (JWTFilter.class : 32)");
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid JWT token in Bearer header");
             } else {
                 try {
                     String username = jwtService.validateTokenAndRetrieveClaim(jwt);
@@ -50,7 +56,7 @@ public class JwtFilter extends OncePerRequestFilter { //TODO exceptions
                         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
                     }
                 } catch (JWTVerificationException e) {
-                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid JWT Token (JWTFilter.class : 51)");
+                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid JWT Token");
                 }
             }
         }
