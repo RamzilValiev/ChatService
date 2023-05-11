@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import ru.iteco.test.exception.authentication.PasswordIncorrectException;
 import ru.iteco.test.exception.authentication.UserNotFoundByNameException;
 import ru.iteco.test.model.dto.ErrorResponseDto;
@@ -13,7 +14,7 @@ import java.time.LocalDateTime;
 
 @Log4j2
 @RestControllerAdvice
-public class AuthenticationExceptionHandler {
+public class AuthenticationExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.UNAUTHORIZED)

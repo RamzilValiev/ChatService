@@ -27,11 +27,12 @@ public class AuthenticationController {
     @ApiResponse(responseCode = "201", description = "Success")
     @PostMapping("/registration")
     @ResponseStatus(HttpStatus.CREATED)
-    public JwtTokenDto registration(@RequestBody @Validated UserDto userDto) {
-        return authenticationService.registration(userDto);
+    public JwtTokenDto register(@RequestBody @Validated UserDto userDto) {
+        return authenticationService.register(userDto);
     }
 
-    @Operation(summary = "User authorization", description = "Compares the data of the user who is being authorized with the data of the user in the database")
+    @Operation(summary = "User authorization",
+            description = "Compares the data of the user who is being authorized with the data of the user in the database")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Success"),
             @ApiResponse(
@@ -41,7 +42,12 @@ public class AuthenticationController {
             )
     })
     @PostMapping("/login")
-    public JwtTokenDto authorization(@RequestBody @Validated AuthenticationDto authenticationDto) {
-        return authenticationService.authorization(authenticationDto);
+    public JwtTokenDto authorize(@RequestBody @Validated AuthenticationDto authenticationDto) {
+        return authenticationService.authorize(authenticationDto);
+    }
+
+    @PostMapping("/refresh")
+    public JwtTokenDto refresh(@RequestBody JwtTokenDto jwtTokenDto) {
+        return authenticationService.refreshTokens(jwtTokenDto);
     }
 }

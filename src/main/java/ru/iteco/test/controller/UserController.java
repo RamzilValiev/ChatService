@@ -8,16 +8,19 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.iteco.test.model.UserEntityDetails;
 import ru.iteco.test.model.dto.ErrorResponseDto;
 import ru.iteco.test.model.dto.UserDto;
 import ru.iteco.test.service.UserService;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 @RequiredArgsConstructor
 @Tag(name = "Users", description = "User Methods")
 public class UserController {
@@ -25,7 +28,7 @@ public class UserController {
 
     @Operation(summary = "Get all users", description = "Returns all users")
     @ApiResponse(responseCode = "200", description = "Success")
-    @GetMapping()
+    @GetMapping("/all")
     public List<UserDto> getUsers() {
         return userService.findAll();
     }
@@ -55,5 +58,13 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     public String createNewUser(@RequestBody @Validated UserDto userDto) {
         return userService.save(userDto);
+    }
+
+    @GetMapping
+    public UserDto getUser(Principal principal) {
+        Authentication authentication = (Authentication) principal;
+        UserEntityDetails userEntityDetails = (UserEntityDetails) authentication.getPrincipal();
+        Long id = userEntityDetails.getUserEntity().getId();
+        return  userService.findById(id);
     }
 }
