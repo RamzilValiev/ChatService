@@ -48,4 +48,8 @@ public class UserEntityDetails implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    public UserEntity getUserEntity() {
+        return userEntity;
+    }
 }
