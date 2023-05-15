@@ -6,8 +6,6 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.codec.digest.DigestUtils;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import ru.iteco.test.model.dto.AuthenticationDto;
 import ru.iteco.test.model.dto.JwtTokenDto;
@@ -39,11 +37,8 @@ public class JwtService {
                 .sign(Algorithm.HMAC256(jwtProperties.secret()));
     }
 
-    public Pair<String, String> generateRefreshToken() {
-        String refreshToken = UUID.randomUUID().toString();
-        String refreshTokenHex = DigestUtils.md5Hex(refreshToken);
-
-        return Pair.of(refreshToken, refreshTokenHex);
+    public String generateRefreshToken() {
+        return UUID.randomUUID().toString();
     }
 
     public String validateTokenAndRetrieveClaim(String token) throws JWTVerificationException {
@@ -62,26 +57,23 @@ public class JwtService {
 
     public JwtTokenDto update(AuthenticationDto authenticationDto) {
         String newToken = generateToken(authenticationDto.userName());
-        Pair<String, String> newRefreshToken = generateRefreshToken();
+        String newRefreshToken = generateRefreshToken();
 
         JwtTokenEntity jwtTokenEntity = findByUsername(authenticationDto.userName());
         jwtTokenEntity.setToken(newToken);
-        jwtTokenEntity.setRefreshToken(newRefreshToken.getSecond());
+        jwtTokenEntity.setRefreshToken(newRefreshToken);
         save(jwtTokenEntity);
 
-        return new JwtTokenDto(newToken, newRefreshToken.getFirst());
+        return new JwtTokenDto(newToken, newRefreshToken);
     }
 
     public JwtTokenDto update(String username) {
-        Pair<String, String> newRefreshTokenDto = generateRefreshToken();
-
-        String newRefreshToken = newRefreshTokenDto.getFirst();
-        String newRefreshTokenHex = newRefreshTokenDto.getSecond();
         String newJwtToken = generateToken(username);
+        String newRefreshToken = generateRefreshToken();
 
         JwtTokenEntity jwtTokenEntity = findByUsername(username);
         jwtTokenEntity.setToken(newJwtToken);
-        jwtTokenEntity.setRefreshToken(newRefreshTokenHex);
+        jwtTokenEntity.setRefreshToken(newRefreshToken);
         save(jwtTokenEntity);
 
         return new JwtTokenDto(newJwtToken, newRefreshToken);
@@ -102,9 +94,5 @@ public class JwtService {
     public JwtTokenEntity findByUsername(String username) {
         return jwtTokenRepository.findByUserEntityUserName(username)
                 .orElseThrow(() -> new RuntimeException("JwtTokenEntity is not found, invalid username"));
-    }
-
-    public boolean isPresentJwtToken(String token) {
-        return jwtTokenRepository.existsByToken(token);
     }
 }

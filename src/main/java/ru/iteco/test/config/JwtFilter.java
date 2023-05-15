@@ -7,12 +7,15 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import ru.iteco.test.exception.authentication.JwtAuthenticationException;
+import ru.iteco.test.model.entity.JwtTokenEntity;
 import ru.iteco.test.service.JwtService;
 import ru.iteco.test.service.UserEntityDetailsService;
 
@@ -23,6 +26,7 @@ public class JwtFilter extends AbstractAuthenticationProcessingFilter {
 
     private final JwtService jwtService;
     private final UserEntityDetailsService userEntityDetailsService;
+    private static final String BEARER = "Bearer ";
 
     protected JwtFilter(JwtService jwtService,
                         UserEntityDetailsService userEntityDetailsService,
@@ -48,19 +52,25 @@ public class JwtFilter extends AbstractAuthenticationProcessingFilter {
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) {
-        String authHeader = request.getHeader("Authorization");
+        String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
         String jwt = Optional.ofNullable(authHeader)
                 .filter(header -> !header.isBlank())
-                .filter(header -> header.startsWith("Bearer "))
-                .map(header -> header.substring("Bearer ".length()))
+                .filter(header -> header.startsWith(BEARER))
+                .map(header -> header.substring(BEARER.length()))
                 .orElseThrow(() -> new JwtAuthenticationException("Jwt token is empty"));
 
         if (jwt.isBlank()) {
             throw new JwtAuthenticationException("Invalid JWT token in Bearer header");
         }
         try {
-            if (!jwtService.isPresentJwtToken(jwt)) {
+            String userName = jwtService.validateTokenAndRetrieveClaim(jwt);
+            JwtTokenEntity jwtTokenEntity = jwtService.findByUsername(userName);
+
+            String token = jwtTokenEntity.getToken();
+            String tokenHex = DigestUtils.md5Hex(jwt);
+
+            if (!token.equals(tokenHex)) {
                 throw new JwtAuthenticationException("Jwt token missing from database");
             }
             String username = jwtService.validateTokenAndRetrieveClaim(jwt);

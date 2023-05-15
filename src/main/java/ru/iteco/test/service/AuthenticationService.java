@@ -3,7 +3,6 @@ package ru.iteco.test.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.springframework.data.util.Pair;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.iteco.test.exception.authentication.PasswordIncorrectException;
@@ -33,13 +32,13 @@ public class AuthenticationService {
         log.info("user named: {} is registered in the database by id: {}", userEntity.getUserName(), userEntity.getId());
 
         String token = jwtService.generateToken(userDto.userName());
-        Pair<String, String> refreshToken = jwtService.generateRefreshToken();
+        String refreshToken = jwtService.generateRefreshToken();
 
-        JwtTokenEntity jwtTokenEntity = jwtService.mapToEntity(token, refreshToken.getSecond());
+        JwtTokenEntity jwtTokenEntity = jwtService.mapToEntity(token, refreshToken);
         jwtService.save(jwtTokenEntity);
 
         log.info("Token and Refresh Token for user named: {} saved to database", userEntity.getUserName());
-        return new JwtTokenDto(token, refreshToken.getFirst());
+        return new JwtTokenDto(token, refreshToken);
     }
 
     public JwtTokenDto authorize(AuthenticationDto authenticationDto) {
