@@ -10,6 +10,4 @@ import java.util.Optional;
 public interface JwtTokenRepository extends JpaRepository<JwtTokenEntity, Long> {
 
     Optional<JwtTokenEntity> findByUserEntityUserName(String username);
-
-    boolean existsByToken(String token);
 }
