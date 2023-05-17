@@ -33,7 +33,7 @@ public class JwtFilter extends AbstractAuthenticationProcessingFilter {
                         AuthenticationManager authenticationManager,
                         JwtSuccessHandler jwtSuccessHandler,
                         JwtFailureHandler jwtFailureHandler) {
-        super("/api/**");
+        super("/**");
         this.jwtService = jwtService;
         this.userEntityDetailsService = userEntityDetailsService;
         this.setAuthenticationManager(authenticationManager);

@@ -20,7 +20,7 @@ import java.security.Principal;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/users")
 @RequiredArgsConstructor
 @Tag(name = "Users", description = "User Methods")
 public class UserController {
