@@ -9,7 +9,6 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -17,6 +16,9 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import ru.iteco.test.service.JwtService;
 import ru.iteco.test.service.UserEntityDetailsService;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -29,20 +31,27 @@ public class SecurityConfig {
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JwtSuccessHandler jwtSuccessHandler;
     private final JwtFailureHandler jwtFailureHandler;
+    private static final List<String> REQUEST_MATCHERS = Arrays.asList(
+            "/auth/**",
+            "/swagger-ui/**",
+            "/v3/api-docs/**",
+            "/error"
+    );
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(authorize -> authorize
-                        .anyRequest().authenticated())
+                        .anyRequest().permitAll())
                 .addFilterBefore(
                         new JwtFilter(
                                 jwtService,
                                 userEntityDetailsService,
                                 authenticationManager(authenticationConfiguration),
                                 jwtSuccessHandler,
-                                jwtFailureHandler
+                                jwtFailureHandler,
+                                REQUEST_MATCHERS
                         ),
                         UsernamePasswordAuthenticationFilter.class
                 )
@@ -50,15 +59,6 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         return httpSecurity.build();
-    }
-
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().requestMatchers(
-                "/auth/**",
-                "/swagger-ui/**",
-                "/v3/api-docs/**",
-                "/error");
     }
 
     @Bean

@@ -3,8 +3,6 @@ package ru.iteco.test.config;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -14,16 +12,19 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
+import org.springframework.util.AntPathMatcher;
 import ru.iteco.test.exception.authentication.JwtAuthenticationException;
 import ru.iteco.test.model.entity.JwtTokenEntity;
 import ru.iteco.test.service.JwtService;
 import ru.iteco.test.service.UserEntityDetailsService;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 public class JwtFilter extends AbstractAuthenticationProcessingFilter {
 
+    private final List<String> requestMatchers;
     private final JwtService jwtService;
     private final UserEntityDetailsService userEntityDetailsService;
     private static final String BEARER = "Bearer ";
@@ -32,13 +33,15 @@ public class JwtFilter extends AbstractAuthenticationProcessingFilter {
                         UserEntityDetailsService userEntityDetailsService,
                         AuthenticationManager authenticationManager,
                         JwtSuccessHandler jwtSuccessHandler,
-                        JwtFailureHandler jwtFailureHandler) {
+                        JwtFailureHandler jwtFailureHandler,
+                        List<String> requestMatchers) {
         super("/**");
         this.jwtService = jwtService;
         this.userEntityDetailsService = userEntityDetailsService;
         this.setAuthenticationManager(authenticationManager);
         this.setAuthenticationSuccessHandler(jwtSuccessHandler);
         this.setAuthenticationFailureHandler(jwtFailureHandler);
+        this.requestMatchers = requestMatchers;
     }
 
     @Override
@@ -87,9 +90,10 @@ public class JwtFilter extends AbstractAuthenticationProcessingFilter {
     }
 
     @Override
-    public void doFilter(ServletRequest request,
-                         ServletResponse response,
-                         FilterChain chain) throws IOException, ServletException {
-        super.doFilter(request, response, chain);
+    protected boolean requiresAuthentication(HttpServletRequest request, HttpServletResponse response) {
+        String servletPath = request.getServletPath();
+
+        return requestMatchers.stream()
+                .noneMatch(pattern -> new AntPathMatcher().match(pattern, servletPath));
     }
 }
