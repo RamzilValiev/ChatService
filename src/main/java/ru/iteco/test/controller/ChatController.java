@@ -20,7 +20,7 @@ import ru.iteco.test.service.ChatService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/chats")
+@RequestMapping("/chats")
 @RequiredArgsConstructor
 @Tag(name = "Chats", description = "Chat Methods")
 public class ChatController {

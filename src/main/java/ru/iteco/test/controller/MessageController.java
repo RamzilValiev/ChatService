@@ -21,7 +21,7 @@ import ru.iteco.test.service.MessageService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/messages")
+@RequestMapping("/messages")
 @RequiredArgsConstructor
 @Tag(name = "Messages", description = "Message Methods")
 public class MessageController {
