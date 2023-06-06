@@ -17,7 +17,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import ru.iteco.test.service.JwtService;
 import ru.iteco.test.service.UserEntityDetailsService;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -31,7 +30,7 @@ public class SecurityConfig {
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JwtSuccessHandler jwtSuccessHandler;
     private final JwtFailureHandler jwtFailureHandler;
-    private static final List<String> REQUEST_MATCHERS = Arrays.asList(
+    private static final List<String> REQUEST_MATCHERS = List.of(
             "/auth/**",
             "/swagger-ui/**",
             "/v3/api-docs/**",
